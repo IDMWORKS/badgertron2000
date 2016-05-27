@@ -1,0 +1,6 @@
+{
+    "JenkinsSettings": {
+        "Username": "my-username",
+        "Token": "my-token"
+    }
+}
