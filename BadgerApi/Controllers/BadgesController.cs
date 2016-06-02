@@ -17,9 +17,9 @@ namespace BadgerApi
         }
 
         [HttpGet("{badgeType}/{projectName}")]
-        public FileStreamResult Get(string badgeType, string projectName)
+        public IActionResult Get(string badgeType, string projectName)
         {
-            return new FileStreamResult(new FileStream("Badges/coverage-28.svg", FileMode.Open), "image/svg");
+            return new FileStreamResult(new FileStream("Badges/coverage-28.svg", FileMode.Open), "image/svg+xml");
         }
 
 
