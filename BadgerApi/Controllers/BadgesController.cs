@@ -21,6 +21,7 @@ namespace BadgerApi
         }
 
         [HttpGet("{badgeType}/{projectName}")]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Get(string badgeType, string projectName)
         {
             return new FileStreamResult(new FileStream("Badges/coverage-28.svg", FileMode.Open), "image/svg+xml");
