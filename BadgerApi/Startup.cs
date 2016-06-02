@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace BadgerApi
 {
-    
     public class Startup
     {
         private IConfigurationRoot config;
@@ -21,6 +20,7 @@ namespace BadgerApi
                 
             config = builder.Build();
         }
+        
         public void ConfigureServices(IServiceCollection services)
         { 
             services.AddOptions();

@@ -3,17 +3,21 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace BadgerApi
 {
     [Route("/badge")]
     public class BadgesController
     {
-       
-        private JenkinsSettings JenkinsSettings { get; set; }
+        private JenkinsSettings jenkinsSettings;
+        private ILogger<BadgesController> logger; 
         
-        public BadgesController(IOptions<JenkinsSettings> settings) {
-            JenkinsSettings = settings.Value;
+        public BadgesController(
+            ILogger<BadgesController> logger, 
+            IOptions<JenkinsSettings> settings) {
+            this.jenkinsSettings = settings.Value;
+            this.logger = logger;
         }
 
         [HttpGet("{badgeType}/{projectName}")]
@@ -21,9 +25,5 @@ namespace BadgerApi
         {
             return new FileStreamResult(new FileStream("Badges/coverage-28.svg", FileMode.Open), "image/svg+xml");
         }
-
-
-        
-        
     }
 }
