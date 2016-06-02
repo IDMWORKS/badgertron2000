@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace BadgerApi
 {
-    [Route("/badge")]
-    public class BadgesController
+    [Route("/jenkins/build-status")]
+    public class BadgesController : Controller
     {
         private JenkinsSettings jenkinsSettings;
         private ILogger<BadgesController> logger; 
@@ -20,10 +20,11 @@ namespace BadgerApi
             this.logger = logger;
         }
 
-        [HttpGet("{badgeType}/{projectName}")]
+        [HttpGet("{projectName}/{jobNumber}")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Get(string badgeType, string projectName)
+        public IActionResult Get(string projectName, string jobNumber)
         {
+            logger.LogInformation($"Serving badge for route {Request.Path} [{projectName} and {jobNumber}]");
             return new FileStreamResult(new FileStream("Badges/coverage-28.svg", FileMode.Open), "image/svg+xml");
         }
     }
