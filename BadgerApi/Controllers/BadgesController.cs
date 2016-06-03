@@ -9,11 +9,12 @@ namespace BadgerApi
     public class BadgesController : Controller
     {
         private JenkinsSettings jenkinsSettings;
-        private ILogger<BadgesController> logger; 
-        
+        private ILogger<BadgesController> logger;
+
         public BadgesController(
-            ILogger<BadgesController> logger, 
-            IOptions<JenkinsSettings> settings) {
+            ILogger<BadgesController> logger,
+            IOptions<JenkinsSettings> settings)
+        {
             this.jenkinsSettings = settings.Value;
             this.logger = logger;
         }

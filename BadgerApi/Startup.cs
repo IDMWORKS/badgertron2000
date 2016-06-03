@@ -20,23 +20,24 @@ namespace BadgerApi
     public class Startup
     {
         private IConfigurationRoot config;
-        
-        public Startup(IHostingEnvironment env) {
+
+        public Startup(IHostingEnvironment env)
+        {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
-                
+
             config = builder.Build();
         }
-        
+
         public void ConfigureServices(IServiceCollection services)
-        { 
+        {
             services.AddOptions();
-            
+
             services.AddMvcCore()
                     .AddJsonFormatters();
-                    
+
             services.Configure<JenkinsSettings>(config.GetSection("JenkinsSettings"));
         }
 
