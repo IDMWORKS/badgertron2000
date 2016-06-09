@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 namespace BadgerApi
 {
     [Route("/jenkins/build-status")]
-    public class BadgesController : Controller
+    public class JenkinsBadgesController : Controller
     {
         private JenkinsSettings jenkinsSettings;
-        private ILogger<BadgesController> logger;
+        private ILogger<JenkinsBadgesController> logger;
 
-        public BadgesController(
-            ILogger<BadgesController> logger,
+        public JenkinsBadgesController(
+            ILogger<JenkinsBadgesController> logger,
             IOptions<JenkinsSettings> settings)
         {
             this.jenkinsSettings = settings.Value;
