@@ -1,5 +1,6 @@
 {
     "JenkinsSettings": {
+        "Host": "ci.example.org",
         "Username": "my-username",
         "Token": "my-token"
     }
