@@ -21,13 +21,13 @@ namespace BadgerApi.Jenkins
             this.logger = logger;
         }
 
-        [HttpGet("{projectName}/{jobNumber}")]
+        [HttpGet("{projectName}/{buildId}")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Get(string projectName, string jobNumber)
+        public async Task<IActionResult> Get(string projectName, string buildId)
         {
-            logger.LogInformation($"Serving badge for route {Request.Path} [{projectName} and {jobNumber}]");
+            logger.LogInformation($"Serving badge for route {Request.Path} [{projectName} and {buildId}]");
             
-            JenkinsJobResolver resolver = new JenkinsJobResolver(jenkinsSettings, projectName, jobNumber);
+            JenkinsJobResolver resolver = new JenkinsJobResolver(jenkinsSettings, projectName, buildId);
             JenkinsBuildStatus status = await resolver.GetBuildStatus();
 
             var badgeName = "build-failing.svg";

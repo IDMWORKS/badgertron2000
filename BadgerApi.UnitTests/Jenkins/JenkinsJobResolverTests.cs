@@ -20,9 +20,9 @@ namespace BadgerApi.Jenkins
          [InlineData("Project1", "123")]
          [InlineData("Project2", "456")]
          [InlineData("blahblah", "789")]
-         public void ReturnValidBuildStatus(String projectName, String jobNumber)
+         public void ReturnValidBuildStatus(String projectName, String buildId)
          {
-             var status = _jenkinsJobResolver.GetBuildStatus(projectName, jobNumber);
+             var status = _jenkinsJobResolver.GetBuildStatus(projectName, buildId);
              Assert.NotNull(status);
          }
     }

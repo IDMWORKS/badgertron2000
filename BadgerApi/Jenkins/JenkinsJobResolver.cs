@@ -11,13 +11,13 @@ namespace BadgerApi.Jenkins
     {
         private JenkinsSettings settings;
         private string projectName;
-        private string jobNumber;
+        private string buildId;
 
-        public JenkinsJobResolver(JenkinsSettings settings, string projectName, string jobNumber)
+        public JenkinsJobResolver(JenkinsSettings settings, string projectName, string buildId)
         {
             this.settings = settings;
             this.projectName = projectName;
-            this.jobNumber = jobNumber;
+            this.buildId = buildId;
         }
 
         public JenkinsJobResolver(JenkinsSettings settings, string projectName) 
@@ -25,7 +25,7 @@ namespace BadgerApi.Jenkins
 
         public async Task<JenkinsBuildStatus> GetBuildStatus()
         {
-            var url = $"http://{settings.Host}/job/{projectName}/{jobNumber}/api/json";
+            var url = $"http://{settings.Host}/job/{projectName}/{buildId}/api/json";
             
             var client = new HttpClient();
 
