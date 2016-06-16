@@ -24,7 +24,7 @@ namespace BadgerApi
         public IActionResult Get(string projectName, string jobNumber)
         {
             logger.LogInformation($"Serving badge for route {Request.Path} [{projectName} and {jobNumber}]");
-            return new FileStreamResult(new FileStream("Badges/coverage-28.svg", FileMode.Open), "image/svg+xml");
+            return new FileStreamResult(new FileStream("images/badges/coverage-28.svg", FileMode.Open), "image/svg+xml");
         }
     }
 }
