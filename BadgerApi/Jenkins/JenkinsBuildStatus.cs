@@ -1,4 +1,4 @@
-namespace BadgerApi
+namespace BadgerApi.Jenkins
 {
     public class JenkinsBuildStatus
     {

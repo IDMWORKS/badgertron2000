@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Xunit;
 using BadgerApi;
 
-namespace BadgerApi.UnitTests.Services
+namespace BadgerApi.Jenkins
 {
-    public class JenkinsJobResolverTest
+    public class JenkinsJobResolverTests
     {
          private readonly JenkinsJobResolver _jenkinsJobResolver;
 
-         public JenkinsJobResolverTest()
+         public JenkinsJobResolverTests()
          {
              _jenkinsJobResolver = new JenkinsJobResolver();
          }

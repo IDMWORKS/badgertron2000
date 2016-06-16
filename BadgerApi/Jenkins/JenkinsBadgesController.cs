@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using System.IO;
 using Microsoft.Extensions.Logging;
 
-namespace BadgerApi
+namespace BadgerApi.Jenkins
 {
     [Route("/jenkins/build-status")]
     public class JenkinsBadgesController : Controller
