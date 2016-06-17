@@ -31,6 +31,13 @@ namespace BadgerApi.Jenkins
             return await GetApiData(url);
         }
 
+        public async Task<ExpandoObject> GetProjectStatus(string projectName, int depth = 1)
+        {
+            var url = $"http://{settings.Host}/job/{projectName}/api/json?depth={depth}";
+
+            return await GetApiData(url);
+        }
+
         private async Task<ExpandoObject> GetApiData(string url)
         {
             var client = new HttpClient();
