@@ -19,10 +19,7 @@ namespace BadgerApi.Jenkins
             this.projectName = projectName;
             this.buildId = buildId;
         }
-
-        public JenkinsJobResolver(JenkinsSettings settings, string projectName) 
-            : this(settings, projectName, "lastBuild") { }
-
+        
         public async Task<JenkinsBuildStatus> GetBuildStatus()
         {
             var url = $"http://{settings.Host}/job/{projectName}/{buildId}/api/json";
