@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using BadgerApi.Jenkins;
-using Microsoft.AspNetCore.Diagnostics;
 
 namespace BadgerApi
 {
@@ -48,36 +47,13 @@ namespace BadgerApi
             loggerFactory.AddConsole(LogLevel.Debug);
 
             app.UseStatusCodePages("text/plain", "Response, status code: {0}");
-
-            // The UseExceptionHandler and logging seems to suppress the developer exception page, so
-            // don't enable both at the same time. 
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             } 
-            else
-            {
-                UseUnhandledExceptionLogger(app, loggerFactory);
-            }
+            
             app.UseMvc();
-        }
-
-        private void UseUnhandledExceptionLogger(IApplicationBuilder app, ILoggerFactory loggerFactory)
-        {
-            app.UseExceptionHandler(
-                builder =>
-                {
-                    builder.Run(
-                        async context =>
-                        {
-                            var error = context.Features.Get<IExceptionHandlerFeature>();
-                            if (error != null)
-                            {
-                                ILogger logger = loggerFactory.CreateLogger<Startup>();
-                                logger.LogError("An error occurred", error.Error);
-                            }
-                        });
-                });
         }
     }
 }
