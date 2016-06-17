@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using BadgerApi.Jenkins;
+using NLog.Extensions.Logging;
 
 namespace BadgerApi
 {
@@ -27,6 +28,7 @@ namespace BadgerApi
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 .AddEnvironmentVariables();
 
             config = builder.Build();
@@ -46,7 +48,11 @@ namespace BadgerApi
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole(LogLevel.Debug);
+            // add NLog to ASP.NET Core - default logging does not log to a file
+            loggerFactory.AddNLog();
+
+            // configure logging using appsettings.json
+            loggerFactory.AddConsole(config.GetSection("Logging"));
 
             app.UseStatusCodePages("text/plain", "Response, status code: {0}");
             

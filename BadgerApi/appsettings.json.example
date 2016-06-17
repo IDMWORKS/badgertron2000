@@ -3,5 +3,13 @@
         "Host": "ci.example.org",
         "Username": "my-username",
         "Token": "my-token"
+    },
+    "Logging": {
+        "IncludeScopes": false,
+        "LogLevel": {
+            "Default": "Debug",
+            "System": "Information",
+            "Microsoft": "Information"
+        }
     }
 }
