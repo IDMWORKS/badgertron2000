@@ -8,13 +8,13 @@ using System;
 namespace BadgerApi.Jenkins
 {
     [Route("/jenkins/build-status")]
-    public class JenkinsBadgesController : Controller
+    public class JenkinsBuildStatusController : Controller
     {
         private JenkinsSettings jenkinsSettings;
-        private ILogger<JenkinsBadgesController> logger;
+        private ILogger<JenkinsBuildStatusController> logger;
 
-        public JenkinsBadgesController(
-            ILogger<JenkinsBadgesController> logger,
+        public JenkinsBuildStatusController(
+            ILogger<JenkinsBuildStatusController> logger,
             IOptions<JenkinsSettings> settings)
         {
             this.jenkinsSettings = settings.Value;
