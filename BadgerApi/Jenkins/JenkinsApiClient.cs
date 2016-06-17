@@ -35,6 +35,16 @@ namespace BadgerApi.Jenkins
 
             return status;
         }
+        public async Task<byte[]> GetAsset(string projectName, string buildId, string asset)
+        {
+            var url = $"http://{settings.Host}/job/{projectName}/{buildId}/{asset}";
+            
+            var client = new HttpClient();
+
+            SetRequestHeaders(client);
+
+            return await client.GetByteArrayAsync(url);
+        }
 
         private void SetRequestHeaders(HttpClient client)
         {
