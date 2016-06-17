@@ -7,20 +7,16 @@ using System.Threading.Tasks;
 
 namespace BadgerApi.Jenkins
 {
-    public class JenkinsJobResolver 
+    public class JenkinsApiClient 
     {
         private JenkinsSettings settings;
-        private string projectName;
-        private string buildId;
 
-        public JenkinsJobResolver(JenkinsSettings settings, string projectName, string buildId)
+        public JenkinsApiClient(JenkinsSettings settings)
         {
             this.settings = settings;
-            this.projectName = projectName;
-            this.buildId = buildId;
         }
         
-        public async Task<JenkinsBuildStatus> GetBuildStatus()
+        public async Task<JenkinsBuildStatus> GetBuildStatus(string projectName, string buildId)
         {
             var url = $"http://{settings.Host}/job/{projectName}/{buildId}/api/json";
             

@@ -30,8 +30,8 @@ namespace BadgerApi.Jenkins
 
             logger.LogInformation($"Serving badge for route {Request.Path} [{projectName} and {actualBuildId}]");
 
-            JenkinsJobResolver resolver = new JenkinsJobResolver(jenkinsSettings, projectName, actualBuildId);
-            JenkinsBuildStatus status = await resolver.GetBuildStatus();
+            JenkinsApiClient resolver = new JenkinsApiClient(jenkinsSettings);
+            JenkinsBuildStatus status = await resolver.GetBuildStatus(projectName, actualBuildId);
 
             var badgeName = "build-failing.svg";
             if ("success".Equals(status.Result, StringComparison.OrdinalIgnoreCase))
