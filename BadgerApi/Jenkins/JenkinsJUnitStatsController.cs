@@ -41,17 +41,22 @@ namespace BadgerApi.Jenkins
         }
 
         private async Task<byte[]> GetBadgeContentForTestResults(Tuple<int, int> testResults)
-        {           
-            string[] badgeColors = { "red", "orange", "yellow", "yellowgreen", "green", "brightgreen" };
-
-            double ratio = (double)testResults.Item1 / (double)testResults.Item2;
-            int index = Convert.ToInt32(ratio * (badgeColors.Length - 1));
-            
+        {
             var badgeUrl = $"https://img.shields.io/badge/tests-error-blue.svg";
-            if ((index >= 0) && (index < badgeColors.Length))
+
+            // no test results found in the build status
+            if (testResults != null)
             {
-                var badgeColor = badgeColors[index];
-                badgeUrl = $"https://img.shields.io/badge/tests-{testResults.Item1}%2F{testResults.Item2}-{badgeColor}.svg";
+                string[] badgeColors = { "red", "orange", "yellow", "yellowgreen", "green", "brightgreen" };
+
+                double ratio = (double)testResults.Item1 / (double)testResults.Item2;
+                int index = Convert.ToInt32(ratio * (badgeColors.Length - 1));
+                
+                if ((index >= 0) && (index < badgeColors.Length))
+                {
+                    var badgeColor = badgeColors[index];
+                    badgeUrl = $"https://img.shields.io/badge/tests-{testResults.Item1}%2F{testResults.Item2}-{badgeColor}.svg";
+                }
             }
 
             var client = new HttpClient();
