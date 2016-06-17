@@ -36,6 +36,10 @@ namespace BadgerApi.Jenkins
             {
                 badgeName = "build-passing.svg";
             }
+            else if (String.IsNullOrEmpty(status.Result))
+            {
+                badgeName = "build-running.svg";
+            }
             
             return new FileStreamResult(new FileStream($"images/badges/{badgeName}", FileMode.Open), "image/svg+xml");
         }
