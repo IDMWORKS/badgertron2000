@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
+using System.Dynamic;
 
 namespace BadgerApi.Jenkins
 {
@@ -25,23 +26,52 @@ namespace BadgerApi.Jenkins
         public async Task<IActionResult> Get(string projectName, string buildId)
         {
             // last path segment is optional
-            var actualBuildId = buildId ?? "lastBuild";
+            var actualBuildId = buildId ?? JenkinsApiClient.LastBuildId;
 
             logger.LogInformation($"Serving badge for route {Request.Path} [{projectName} and {actualBuildId}]");
             
-            JenkinsBuildStatus status = await apiClient.GetBuildStatus(projectName, actualBuildId);
+            var buildStatus = await apiClient.GetBuildStatus(projectName, actualBuildId);
 
+            string result = ExtractResultFromBuildStatus(buildStatus);
+
+            var badgeName = GetBadgeNameForBuildResult(result);
+            
+            return new FileStreamResult(new FileStream($"images/badges/{badgeName}", FileMode.Open), "image/svg+xml");
+        }
+
+        private const string ResultKey = "result";
+        private const string SuccessValue = "success";
+
+        private string GetBadgeNameForBuildResult(string buildResult)
+        {
             var badgeName = "build-failing.svg";
-            if ("success".Equals(status.Result, StringComparison.OrdinalIgnoreCase))
+            
+            if (SuccessValue.Equals(buildResult, StringComparison.OrdinalIgnoreCase))
             {
                 badgeName = "build-passing.svg";
             }
-            else if (String.IsNullOrEmpty(status.Result))
+            else if (String.IsNullOrEmpty(buildResult))
             {
                 badgeName = "build-running.svg";
             }
-            
-            return new FileStreamResult(new FileStream($"images/badges/{badgeName}", FileMode.Open), "image/svg+xml");
+
+            return badgeName;
+        }
+
+        private string ExtractResultFromBuildStatus(ExpandoObject buildStatus)
+        {
+            string result = null;
+
+            foreach (var kvp in buildStatus)
+            {
+                if (ResultKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    result = (string)kvp.Value;
+                    break;
+                }
+            }
+
+            return result;
         }
     }
 }

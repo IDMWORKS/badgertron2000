@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using System.IO;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using System;
 using Microsoft.AspNetCore.StaticFiles;
 
 namespace BadgerApi.Jenkins
