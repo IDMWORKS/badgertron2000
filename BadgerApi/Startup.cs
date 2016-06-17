@@ -38,8 +38,10 @@ namespace BadgerApi
 
             services.AddMvcCore()
                     .AddJsonFormatters();
-
+            
             services.Configure<JenkinsSettings>(config.GetSection("JenkinsSettings"));
+            
+            services.AddTransient<JenkinsApiClient, JenkinsApiClient>();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IHostingEnvironment env)

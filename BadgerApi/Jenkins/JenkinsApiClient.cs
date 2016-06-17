@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Options;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -15,6 +16,9 @@ namespace BadgerApi.Jenkins
         {
             this.settings = settings;
         }
+
+        public JenkinsApiClient(IOptions<JenkinsSettings> settings)
+            : this(settings.Value) { }
         
         public async Task<JenkinsBuildStatus> GetBuildStatus(string projectName, string buildId)
         {
