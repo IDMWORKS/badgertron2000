@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
 using System.Dynamic;
-using System.Net.Http;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BadgerApi.SonarQube
 {
@@ -33,33 +33,28 @@ namespace BadgerApi.SonarQube
 
             string sqaleRating = ExtractSqaleFromMetrics(projectMetrics);
 
-            byte[] content = await GetBadgeContentForTestResults(sqaleRating);
-
-            return File(content, "image/svg+xml");
+            var badgeName = GetBadgeContentForSqualeRating(sqaleRating);
+            
+            return new FileStreamResult(new FileStream($"images/badges/{badgeName}", FileMode.Open), "image/svg+xml");
         }
 
-        private async Task<byte[]> GetBadgeContentForTestResults(string sqaleRating)
+        private string GetBadgeContentForSqualeRating(string sqaleRating)
         {
-            var badgeUrl = $"https://img.shields.io/badge/sqale-error-blue.svg";
+            var badgeName = $"sqale-error.svg";
 
             // no test results found in the build status
             if (!String.IsNullOrEmpty(sqaleRating))
             {
-                string[] badgeColors = { "green", "yellowgreen", "yellow", "orange", "red" };
-
                 char sqaleChar = sqaleRating.ToUpper()[0];
-                int offset = (int)'A';
-                int index = (int)sqaleChar - offset;
+                char[] sqaleRatings = { 'A', 'B', 'C', 'D', 'E' };
                 
-                if ((index >= 0) && (index < badgeColors.Length))
+                if (sqaleRatings.Contains(sqaleChar))
                 {
-                    var badgeColor = badgeColors[index];
-                    badgeUrl = $"https://img.shields.io/badge/sqale-{sqaleRating}-{badgeColor}.svg";
+                    badgeName = $"sqale-{sqaleRating}.svg";
                 }
             }
 
-            var client = new HttpClient();
-            return await client.GetByteArrayAsync(badgeUrl);
+            return badgeName;
         }
 
         private const string MeauresKey = "msr";
