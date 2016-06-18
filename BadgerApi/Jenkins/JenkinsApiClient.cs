@@ -26,14 +26,14 @@ namespace BadgerApi.Jenkins
                 
         public async Task<ExpandoObject> GetBuildStatus(string projectName, string buildId, int depth = 1)
         {
-            var url = $"{settings.RootURL}/job/{projectName}/{buildId}/api/json?depth={depth}";
+            var url = $"{settings.HostURL}/job/{projectName}/{buildId}/api/json?depth={depth}";
 
             return await GetApiData(url);
         }
 
         public async Task<ExpandoObject> GetProjectStatus(string projectName, int depth = 1)
         {
-            var url = $"{settings.RootURL}/job/{projectName}/api/json?depth={depth}";
+            var url = $"{settings.HostURL}/job/{projectName}/api/json?depth={depth}";
 
             return await GetApiData(url);
         }
@@ -54,7 +54,7 @@ namespace BadgerApi.Jenkins
 
         public async Task<byte[]> GetAsset(string projectName, string buildId, string asset)
         {
-            var url = $"{settings.RootURL}/job/{projectName}/{buildId}/{asset}";
+            var url = $"{settings.HostURL}/job/{projectName}/{buildId}/{asset}";
             
             var client = new HttpClient();
 

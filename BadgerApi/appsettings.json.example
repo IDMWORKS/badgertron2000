@@ -1,6 +1,6 @@
 {
-    "JenkinsSettings": {
-        "RootURL": "http://ci.example.org",
+    "Jenkins": {
+        "HostURL": "http://ci.example.org",
         "Username": "my-username",
         "Token": "my-token"
     },
