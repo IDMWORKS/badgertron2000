@@ -14,16 +14,17 @@ namespace BadgerApi.SonarQube
 {
     public class SonarQubeApiClient 
     {
-
         private SonarQubeSettings settings;
+        private HttpClient httpClient;
 
-        public SonarQubeApiClient(SonarQubeSettings settings)
+        public SonarQubeApiClient(SonarQubeSettings settings, HttpClient httpClient)
         {
             this.settings = settings;
+            this.httpClient = httpClient;
         }
 
-        public SonarQubeApiClient(IOptions<SonarQubeSettings> settings)
-            : this(settings.Value) { }
+        public SonarQubeApiClient(IOptions<SonarQubeSettings> settings, HttpClient httpClient)
+            : this(settings.Value, httpClient) { }
 
         public async Task<ExpandoObject> GetProjectMetrics(string projectKey, params string[] metrics)
         {
@@ -34,11 +35,9 @@ namespace BadgerApi.SonarQube
 
         private async Task<ExpandoObject> GetApiData(string url)
         {
-            var client = new HttpClient();
-
-            SetRequestHeaders(client);
+            SetRequestHeaders(httpClient);
             
-            var json = await client.GetStringAsync(url);
+            var json = await httpClient.GetStringAsync(url);
 
             // because the SonarQube REST API returns an array of disparate objects in the "actions" property,
             // and because we need to make use of those objects, we need to parse the JSON as a simple
@@ -48,6 +47,8 @@ namespace BadgerApi.SonarQube
 
         private void SetRequestHeaders(HttpClient client)
         {
+            client.DefaultRequestHeaders.Clear();
+            
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using BadgerApi.Jenkins;
 using NLog.Extensions.Logging;
 using BadgerApi.SonarQube;
+using System.Net.Http;
 
 namespace BadgerApi
 {
@@ -34,8 +35,9 @@ namespace BadgerApi
             services.Configure<JenkinsSettings>(config.GetSection("Jenkins"));
             services.Configure<SonarQubeSettings>(config.GetSection("SonarQube"));
             
-            services.AddTransient<JenkinsApiClient, JenkinsApiClient>();
-            services.AddTransient<SonarQubeApiClient, SonarQubeApiClient>();
+            services.AddTransient<JenkinsApiClient>();
+            services.AddTransient<SonarQubeApiClient>();
+            services.AddTransient<HttpClient>();
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IHostingEnvironment env)

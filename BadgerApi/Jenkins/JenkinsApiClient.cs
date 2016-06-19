@@ -15,15 +15,17 @@ namespace BadgerApi.Jenkins
         public const string LastBuildId = "lastBuild";
 
         private JenkinsSettings settings;
+        private HttpClient httpClient;
 
-        public JenkinsApiClient(JenkinsSettings settings)
+        public JenkinsApiClient(JenkinsSettings settings, HttpClient httpClient)
         {
             this.settings = settings;
+            this.httpClient = httpClient;
         }
 
-        public JenkinsApiClient(IOptions<JenkinsSettings> settings)
-            : this(settings.Value) { }
-                
+        public JenkinsApiClient(IOptions<JenkinsSettings> settings, HttpClient httpClient)
+            : this(settings.Value, httpClient) { }
+               
         public async Task<ExpandoObject> GetBuildStatus(string projectName, string buildId, int depth = 1)
         {
             var url = $"{settings.HostURL}/job/{projectName}/{buildId}/api/json?depth={depth}";
@@ -40,11 +42,9 @@ namespace BadgerApi.Jenkins
 
         private async Task<ExpandoObject> GetApiData(string url)
         {
-            var client = new HttpClient();
-
-            SetRequestHeaders(client);
+            SetRequestHeaders(httpClient);
             
-            var json = await client.GetStringAsync(url);
+            var json = await httpClient.GetStringAsync(url);
 
             // because the Jenkins REST API returns an array of disparate objects in the "actions" property,
             // and because we need to make use of those objects, we need to parse the JSON as a simple
@@ -56,15 +56,15 @@ namespace BadgerApi.Jenkins
         {
             var url = $"{settings.HostURL}/job/{projectName}/{buildId}/{asset}";
             
-            var client = new HttpClient();
+            SetRequestHeaders(httpClient);
 
-            SetRequestHeaders(client);
-
-            return await client.GetByteArrayAsync(url);
+            return await httpClient.GetByteArrayAsync(url);
         }
 
         private void SetRequestHeaders(HttpClient client)
         {
+            client.DefaultRequestHeaders.Clear();
+            
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
