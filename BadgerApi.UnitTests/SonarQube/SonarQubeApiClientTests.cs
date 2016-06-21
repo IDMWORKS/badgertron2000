@@ -14,7 +14,7 @@ namespace BadgerApi.SonarQube
             // arrange
             const string projectKey = "asdf";
             const string expected = "{'name' : 'Test McGee'}";
-            const string metric = "squale_rating";
+            const string metric = "sqale_rating";
 
             SonarQubeSettings settings = new SonarQubeSettings();
             settings.HostURL = "http://example.org";
