@@ -26,6 +26,7 @@ namespace BadgerApi.SonarQube
         public SonarQubeApiClient(IOptions<SonarQubeSettings> settings, HttpClient httpClient)
             : this(settings.Value, httpClient) { }
 
+        // see http://docs.sonarqube.org/display/SONAR/Metric+Definitions for available metrics
         public async Task<ExpandoObject> GetProjectMetrics(string projectKey, params string[] metrics)
         {
             var url = $"{settings.HostURL}/api/resources?format=json&resource={projectKey}&metrics={String.Join(",", metrics)}";
