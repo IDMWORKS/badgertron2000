@@ -26,14 +26,14 @@ namespace BadgerApi.Jenkins
         public JenkinsApiClient(IOptions<JenkinsSettings> settings, HttpClient httpClient)
             : this(settings.Value, httpClient) { }
                
-        public async Task<ExpandoObject> GetBuildStatus(string projectName, string buildId, int depth = 1)
+        public async Task<ExpandoObject> GetBuildStatus(string projectName, string buildId, int depth = 0)
         {
             var url = $"{settings.HostURL}/job/{projectName}/{buildId}/api/json?depth={depth}";
 
             return await GetApiData(url);
         }
 
-        public async Task<ExpandoObject> GetProjectStatus(string projectName, int depth = 1)
+        public async Task<ExpandoObject> GetProjectStatus(string projectName, int depth = 0)
         {
             var url = $"{settings.HostURL}/job/{projectName}/api/json?depth={depth}";
 

@@ -28,7 +28,7 @@ namespace BadgerApi.Jenkins
             JenkinsApiClient jenkinsApiClient = new JenkinsApiClient(settings, httpClient);
 
             // act
-            var jsonObject = await jenkinsApiClient.GetBuildStatus(projectName, buildId);
+            var jsonObject = await jenkinsApiClient.GetBuildStatus(projectName, buildId, 1);
 
             // assert
             var actual = JsonConvert.SerializeObject(jsonObject);
@@ -55,7 +55,7 @@ namespace BadgerApi.Jenkins
             JenkinsApiClient jenkinsApiClient = new JenkinsApiClient(settings, httpClient);
 
             // act
-            var jsonObject = await jenkinsApiClient.GetProjectStatus(projectName);
+            var jsonObject = await jenkinsApiClient.GetProjectStatus(projectName, 1);
 
             // assert
             var actual = JsonConvert.SerializeObject(jsonObject);

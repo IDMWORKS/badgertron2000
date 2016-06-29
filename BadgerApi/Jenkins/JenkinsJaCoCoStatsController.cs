@@ -31,7 +31,7 @@ namespace BadgerApi.Jenkins
 
             logger.LogInformation($"Serving badge for route {Request.Path} [{projectName} and {actualBuildId}]");
             
-            var buildStatus = await apiClient.GetBuildStatus(projectName, actualBuildId, 2);
+            var buildStatus = await apiClient.GetBuildStatus(projectName, actualBuildId, 1);
 
             int? coverage = ExtractCoverageFromBuildStatus(buildStatus);
 
