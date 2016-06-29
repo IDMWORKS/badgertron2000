@@ -89,6 +89,10 @@ namespace BadgerApi.Jenkins
                         }
                     }
                 }
+                if (coverage.HasValue)
+                {
+                    break;
+                }
             }
 
             return coverage;
