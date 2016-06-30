@@ -1,0 +1,20 @@
+{
+    "Jenkins": {
+        "HostURL": "http://ci.example.org",
+        "Username": "my-username",
+        "Token": "my-token"
+    },
+    "SonarQube": {
+        "HostURL": "http://sq.example.org",
+        "Username": "my-username",
+        "Password": "my-password"
+    },
+    "Logging": {
+        "IncludeScopes": false,
+        "LogLevel": {
+            "Default": "Debug",
+            "System": "Information",
+            "Microsoft": "Information"
+        }
+    }
+}

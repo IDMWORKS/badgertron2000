@@ -16,3 +16,6 @@ node_modules
 *.snk
 .nuget/NuGet.exe
 project.lock.json
+
+BadgerApi/appsettings.json
+*.log
