@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Net.Http;
+using Microsoft.Extensions.Options;
 
 namespace BadgerApi.Jenkins
 {
@@ -13,11 +15,14 @@ namespace BadgerApi.Jenkins
     {
         private ILogger<JenkinsJUnitStatsController> logger;
         private JenkinsApiClient apiClient;
+        private CachingSettings settings;
 
         public JenkinsJUnitStatsController(
+            IOptions<CachingSettings> settings,
             ILogger<JenkinsJUnitStatsController> logger,
             JenkinsApiClient apiClient)
         {
+            this.settings = settings.Value;
             this.logger = logger;
             this.apiClient = apiClient;
         }
@@ -42,7 +47,7 @@ namespace BadgerApi.Jenkins
 
         private async Task<byte[]> GetBadgeContentForTestResults(Tuple<int, int> testResults)
         {
-            var badgeUrl = $"https://img.shields.io/badge/tests-error-blue.svg";
+            var badgeName = "tests-error-blue.svg";
 
             // no test results found in the build status
             if (testResults != null)
@@ -55,12 +60,60 @@ namespace BadgerApi.Jenkins
                 if ((index >= 0) && (index < badgeColors.Length))
                 {
                     var badgeColor = badgeColors[index];
-                    badgeUrl = $"https://img.shields.io/badge/tests-{testResults.Item1}%2F{testResults.Item2}-{badgeColor}.svg";
+                    badgeName = $"tests-{testResults.Item1}%2F{testResults.Item2}-{badgeColor}.svg";
                 }
             }
 
+            var cachedContent = GetCachedBadge(badgeName);
+            if (cachedContent != null)
+            {
+                return cachedContent;
+            }
+
             var client = new HttpClient();
-            return await client.GetByteArrayAsync(badgeUrl);
+            var badgeContent = await client.GetByteArrayAsync($"https://img.shields.io/badge/{badgeName}");
+            AddBadgeToCache(badgeName, badgeContent);
+            return badgeContent;
+        }
+
+        private byte[] GetCachedBadge(string badgeName)
+        {
+            // check if caching enabled
+            if (!settings.CacheDynamicBadges)
+            {
+                return null;
+            }
+
+            // check if badge exists in cache directory
+            var path = Path.Combine(settings.CacheDirectory, badgeName);
+            if (System.IO.File.Exists(path))
+            {
+                logger.LogDebug($"Using cached badge for {badgeName}");
+                return System.IO.File.ReadAllBytes(path);
+            }
+
+            // not cached
+            return null;
+        }
+
+        private void AddBadgeToCache(string badgeName, byte[] badgeContent)
+        {
+            // check if caching enabled
+            if (!settings.CacheDynamicBadges)
+            {
+                return;
+            }
+
+            // create badge cache dir if it doesn't exists
+            if (!System.IO.Directory.Exists(settings.CacheDirectory))
+            {
+                System.IO.Directory.CreateDirectory(settings.CacheDirectory);
+            }
+
+            // copy badge data to cache            
+            var path = Path.Combine(settings.CacheDirectory, badgeName);
+            System.IO.File.WriteAllBytes(path, badgeContent);
+            logger.LogDebug($"Added badge {badgeName} to cache");
         }
 
         private const string ActionsKey = "actions";

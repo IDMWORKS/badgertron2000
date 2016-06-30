@@ -19,3 +19,5 @@ project.lock.json
 
 BadgerApi/appsettings.json
 *.log
+
+BadgerApi/images/cached-badges/

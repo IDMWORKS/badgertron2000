@@ -34,6 +34,7 @@ namespace BadgerApi
             
             services.Configure<JenkinsSettings>(config.GetSection("Jenkins"));
             services.Configure<SonarQubeSettings>(config.GetSection("SonarQube"));
+            services.Configure<CachingSettings>(config.GetSection("Caching"));
             
             services.AddTransient<JenkinsApiClient>();
             services.AddTransient<SonarQubeApiClient>();

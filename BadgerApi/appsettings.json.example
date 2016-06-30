@@ -16,5 +16,9 @@
             "System": "Information",
             "Microsoft": "Information"
         }
+    },
+    "Caching": {
+        "CacheDynamicBadges": true,
+        "CacheDirectory": "images\\cached-badges"
     }
 }
