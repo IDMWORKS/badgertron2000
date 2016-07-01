@@ -16,8 +16,7 @@ namespace BadgerApi.SonarQube
             const string expected = "{'name' : 'Test McGee'}";
             const string metric = "sqale_rating";
 
-            SonarQubeSettings settings = new SonarQubeSettings();
-            settings.HostURL = "http://example.org";
+            var settings = new SonarQubeSettings(){ HostURL = "http://example.org" };
 
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When($"{settings.HostURL}/api/resources?format=json&resource={projectKey}&metrics={metric}")
