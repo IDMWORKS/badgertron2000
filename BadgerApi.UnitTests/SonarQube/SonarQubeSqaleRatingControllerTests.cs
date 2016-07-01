@@ -39,7 +39,7 @@ namespace BadgerApi.SonarQube
 
             // setup the SUT
             var apiClient = new SonarQubeApiClient(settings, httpClient);
-            var logger = new LoggerFactory().CreateLogger<SonarQubeSqaleRatingController>();            
+            var logger = new LoggerFactory().CreateLogger<SonarQubeSqaleRatingController>();
             var controller = new SonarQubeSqaleRatingController(logger, apiClient);
 
             // make sure the controller has a non-null Request property (used for logging)
@@ -49,13 +49,13 @@ namespace BadgerApi.SonarQube
             Directory.SetCurrentDirectory("../BadgerApi/");
 
             // act
-            var actual = await controller.Get(projectKey);
+            var response = await controller.Get(projectKey);
 
-            // assert            
-            Assert.IsType<FileStreamResult>(actual);
-            var result = actual as FileStreamResult;
-            var content = new StreamReader(result.FileStream, Encoding.UTF8).ReadToEnd();
-            Assert.Matches("<text ?.+>" + sqaleRating + "<\\/text>", content);
+            // assert
+            Assert.IsType<FileStreamResult>(response);
+            var content = response as FileStreamResult;
+            var actual = new StreamReader(content.FileStream, Encoding.UTF8).ReadToEnd();
+            Assert.Matches("<text ?.+>" + sqaleRating + "<\\/text>", actual);
         }
 
         // Utility methods
