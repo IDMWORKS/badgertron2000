@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Net.Http;
 using Microsoft.Extensions.Options;
+using System.Linq;
 
 namespace BadgerApi.Jenkins
 {
@@ -125,18 +126,8 @@ namespace BadgerApi.Jenkins
 
         private Tuple<int, int> ExtractTestResultsFromBuildStatus(ExpandoObject projectStatus)
         {
-            Tuple<int, int> testResults = null;
-
-            foreach (var kvp in projectStatus)
-            {
-                if (ActionsKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    testResults = ExtractTestResultsFromActions(kvp);
-                    break;
-                }
-            }
-
-            return testResults;
+            var projectKvp = projectStatus.SingleOrDefault(kvp => ActionsKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase));
+            return projectKvp.Value == null ? null : ExtractTestResultsFromActions(projectKvp);
         }
 
         private Tuple<int, int> ExtractTestResultsFromActions(KeyValuePair<string, object> actions)

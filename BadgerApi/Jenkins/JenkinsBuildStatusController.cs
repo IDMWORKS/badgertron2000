@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using System;
+using System.Linq;
 using System.Dynamic;
 
 namespace BadgerApi.Jenkins
@@ -60,18 +61,8 @@ namespace BadgerApi.Jenkins
 
         private string ExtractResultFromBuildStatus(ExpandoObject buildStatus)
         {
-            string result = null;
-
-            foreach (var kvp in buildStatus)
-            {
-                if (ResultKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    result = (string)kvp.Value;
-                    break;
-                }
-            }
-
-            return result;
+            var buildKvp = buildStatus.SingleOrDefault(bs => ResultKey.Equals(bs.Key, StringComparison.OrdinalIgnoreCase));
+            return (string)buildKvp.Value;
         }
     }
 }

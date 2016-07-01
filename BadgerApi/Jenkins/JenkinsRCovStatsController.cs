@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace BadgerApi.Jenkins
 {
@@ -57,18 +58,8 @@ namespace BadgerApi.Jenkins
 
         private int? ExtractCoverageFromProjectStatus(ExpandoObject projectStatus)
         {
-            int? coverage = null;
-
-            foreach (var kvp in projectStatus)
-            {
-                if (HealthReportKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    coverage = ExtractCoverageFromHealthReport(kvp);
-                    break;
-                }
-            }
-
-            return coverage;
+            var projectKvp = projectStatus.SingleOrDefault(p => HealthReportKey.Equals(p.Key, StringComparison.OrdinalIgnoreCase));
+            return projectKvp.Value == null ? null : ExtractCoverageFromHealthReport(projectKvp);
         }
 
         private int? ExtractCoverageFromHealthReport(KeyValuePair<string, object> healthReport)
@@ -117,15 +108,8 @@ namespace BadgerApi.Jenkins
 
         private string ExtractMatchedGroup(string content, string pattern, RegexOptions options)
         {
-            string groupValue = null;
-
             Match match = Regex.Match(content, pattern, options);
-            if (match.Success)
-            {
-                groupValue = match.Groups[1].Value;
-            }
-
-            return groupValue;
+            return match.Success ? match.Groups[1].Value : null;
         }
     }
 }

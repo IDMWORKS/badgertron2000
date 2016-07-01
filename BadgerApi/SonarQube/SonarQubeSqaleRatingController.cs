@@ -64,18 +64,8 @@ namespace BadgerApi.SonarQube
 
         private string ExtractSqaleFromMetrics(ExpandoObject projectMetrics)
         {
-            string sqaleRating = null;
-
-            foreach (var kvp in projectMetrics)
-            {
-                if (MeauresKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    sqaleRating = ExtractSqaleFromMeasures(kvp);
-                    break;
-                }
-            }
-
-            return sqaleRating;
+            var projectKvp = projectMetrics.SingleOrDefault(kvp => MeauresKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase));
+            return projectKvp.Value == null ? null : ExtractSqaleFromMeasures(projectKvp);
         }
 
         private string ExtractSqaleFromMeasures(KeyValuePair<string, object> projectMeasures)
@@ -86,7 +76,6 @@ namespace BadgerApi.SonarQube
             foreach (ExpandoObject measure in measuresList)
             {
                 sqaleRating = ExtractSqaleFromMeasure(measure);
-
                 if (sqaleRating != null)
                 {
                     break;

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 
 namespace BadgerApi.Jenkins
 {
@@ -58,18 +59,8 @@ namespace BadgerApi.Jenkins
 
         private int? ExtractCoverageFromBuildStatus(ExpandoObject projectStatus)
         {
-            int? coverage = null;
-
-            foreach (var kvp in projectStatus)
-            {
-                if (ActionsKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    coverage = ExtractCoverageFromActions(kvp);
-                    break;
-                }
-            }
-
-            return coverage;
+            var projectKvp = projectStatus.SingleOrDefault(p => ActionsKey.Equals(p.Key, StringComparison.OrdinalIgnoreCase));
+            return projectKvp.Value == null ? null : ExtractCoverageFromActions(projectKvp);
         }
 
         private int? ExtractCoverageFromActions(KeyValuePair<string, object> actions)
@@ -79,13 +70,11 @@ namespace BadgerApi.Jenkins
             var actionsList = (List<Object>)actions.Value;
             foreach (var action in actionsList)
             {
-                foreach (var element in (ExpandoObject)action)
+                var actionKvp = ((ExpandoObject)action).SingleOrDefault(a => MethodCoverageKey.Equals(a.Key, StringComparison.OrdinalIgnoreCase));
+                coverage = actionKvp.Value == null ? null : ExtractCoverageFromMethodCoverageMetrics((ExpandoObject)actionKvp.Value);
+                if (coverage.HasValue)
                 {
-                    if (MethodCoverageKey.Equals(element.Key, StringComparison.OrdinalIgnoreCase))
-                    {
-                        coverage = ExtractCoverageFromMethodCoverageMetrics((ExpandoObject)element.Value);
-                        break;
-                    }
+                    break;
                 }
             }
 
@@ -94,18 +83,8 @@ namespace BadgerApi.Jenkins
 
         private int? ExtractCoverageFromMethodCoverageMetrics(ExpandoObject coverageMetrics)
         {
-            int? coverage = null;
-
-            foreach (var coverageMetric in coverageMetrics)
-            {
-                if (PercentageKey.Equals(coverageMetric.Key, StringComparison.OrdinalIgnoreCase))
-                {
-                    coverage = Convert.ToInt32((Int64)coverageMetric.Value);
-                    break;
-                }
-            }
-
-            return coverage;
+            var coverageKvp = coverageMetrics.SingleOrDefault(cm => PercentageKey.Equals(cm.Key, StringComparison.OrdinalIgnoreCase));
+            return coverageKvp.Value == null ? null : (int?)Convert.ToInt32((Int64)coverageKvp.Value);
         }
     }
 }
