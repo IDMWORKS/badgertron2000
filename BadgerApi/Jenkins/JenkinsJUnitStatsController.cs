@@ -16,15 +16,18 @@ namespace BadgerApi.Jenkins
         private ILogger<JenkinsJUnitStatsController> logger;
         private JenkinsApiClient apiClient;
         private CachingSettings settings;
+        private HttpClient httpClient;
 
         public JenkinsJUnitStatsController(
             IOptions<CachingSettings> settings,
             ILogger<JenkinsJUnitStatsController> logger,
-            JenkinsApiClient apiClient)
-        {
+            JenkinsApiClient apiClient,
+            HttpClient httpClient)
+        { 
             this.settings = settings.Value;
             this.logger = logger;
             this.apiClient = apiClient;
+            this.httpClient = httpClient;
         }
 
         [HttpGet("{projectName}/{buildId?}")]
@@ -70,8 +73,7 @@ namespace BadgerApi.Jenkins
                 return cachedContent;
             }
 
-            var client = new HttpClient();
-            var badgeContent = await client.GetByteArrayAsync($"https://img.shields.io/badge/{badgeName}");
+            var badgeContent = await httpClient.GetByteArrayAsync($"https://img.shields.io/badge/{badgeName}");
             AddBadgeToCache(badgeName, badgeContent);
             return badgeContent;
         }
