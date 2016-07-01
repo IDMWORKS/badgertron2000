@@ -8,11 +8,11 @@ namespace BadgerApi.Jenkins
     [Route("/jenkins/assets")]
     public class JenkinsAssetsController : Controller
     {
-        private ILogger<JenkinsBuildStatusController> logger;
+        private ILogger<JenkinsAssetsController> logger;
         private JenkinsApiClient apiClient;
 
         public JenkinsAssetsController(
-            ILogger<JenkinsBuildStatusController> logger,
+            ILogger<JenkinsAssetsController> logger,
             JenkinsApiClient apiClient)
         {
             this.logger = logger;
