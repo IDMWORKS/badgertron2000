@@ -19,6 +19,6 @@
     },
     "Caching": {
         "CacheDynamicBadges": true,
-        "CacheDirectory": "images\\cached-badges"
+        "CacheDirectory": "images/cached-badges"
     }
 }
