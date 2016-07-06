@@ -17,9 +17,9 @@ namespace BadgerApi.Jenkins
         // Test cases
 
         [Theory]
-        [InlineData(0, 5, 292, "brightgreen")]
-        [InlineData(5, 10, 50, "green")]
-        public async void ReturnJUnitStatsBadgeWithoutCachingGivenValidArgs(int failCount, int skipCount, int totalCount, string expectedColor)
+        [InlineData("tests", 0, 5, 292, "brightgreen")]
+        [InlineData("zxcv", 5, 10, 50, "green")]
+        public async void ReturnJUnitStatsBadgeWithoutCachingGivenValidArgs(string caption, int failCount, int skipCount, int totalCount, string expectedColor)
         {
             // arrange
 
@@ -41,7 +41,7 @@ namespace BadgerApi.Jenkins
             const string expectedSvg = "<svg/>";
             var mockShieldHttp = new MockHttpMessageHandler();
             var realTotal = totalCount - skipCount;
-            var badgeName = $"tests-{realTotal - failCount}%2F{realTotal}-{expectedColor}.svg";
+            var badgeName = $"{caption}-{realTotal - failCount}%2F{realTotal}-{expectedColor}.svg";
             mockShieldHttp.When($"https://img.shields.io/badge/{badgeName}")
                 .Respond("image/svg+xml", expectedSvg);
             var shieldHttpClient = new HttpClient(mockShieldHttp);
@@ -57,7 +57,7 @@ namespace BadgerApi.Jenkins
             SetupControllerContext(controller);
 
             // act
-            var response = await controller.Get(projectName, buildId);
+            var response = await controller.Get(projectName, buildId, caption);
 
             // assert
             Assert.IsType<FileContentResult>(response);

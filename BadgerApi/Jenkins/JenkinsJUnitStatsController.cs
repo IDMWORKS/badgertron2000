@@ -33,7 +33,7 @@ namespace BadgerApi.Jenkins
 
         [HttpGet("{projectName}/{buildId?}")]
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-        public async Task<IActionResult> Get(string projectName, string buildId)
+        public async Task<IActionResult> Get(string projectName, string buildId, string caption = "tests")
         {
             // last path segment is optional
             var actualBuildId = buildId ?? JenkinsApiClient.LastBuildId;
@@ -44,14 +44,14 @@ namespace BadgerApi.Jenkins
 
             Tuple<int, int> testResults = ExtractTestResultsFromBuildStatus(buildStatus);
 
-            byte[] content = await GetBadgeContentForTestResults(testResults);
+            byte[] content = await GetBadgeContentForTestResults(testResults, caption);
 
             return File(content, "image/svg+xml");
         }
 
-        private async Task<byte[]> GetBadgeContentForTestResults(Tuple<int, int> testResults)
+        private async Task<byte[]> GetBadgeContentForTestResults(Tuple<int, int> testResults, string caption)
         {
-            var badgeName = "tests-error-blue.svg";
+            var badgeName = $"{caption}-error-blue.svg";
 
             // no test results found in the build status
             if (testResults != null)
@@ -64,7 +64,7 @@ namespace BadgerApi.Jenkins
                 if ((index >= 0) && (index < badgeColors.Length))
                 {
                     var badgeColor = badgeColors[index];
-                    badgeName = $"tests-{testResults.Item1}%2F{testResults.Item2}-{badgeColor}.svg";
+                    badgeName = $"{caption}-{testResults.Item1}%2F{testResults.Item2}-{badgeColor}.svg";
                 }
             }
 
