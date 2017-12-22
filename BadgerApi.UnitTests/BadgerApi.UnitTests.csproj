@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>BadgerApi.UnitTests Class Library</Description>
+    <Authors>IDMWORKS</Authors>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyName>BadgerApi.UnitTests</AssemblyName>
+    <PackageId>BadgerApi.UnitTests</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../BadgerApi/BadgerApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.0-preview-20171211-02" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="richardszalay.mockhttp" Version="3.2.1" />
+    <PackageReference Include="Moq" Version="4.7.145" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+  </ItemGroup>
+
+</Project>

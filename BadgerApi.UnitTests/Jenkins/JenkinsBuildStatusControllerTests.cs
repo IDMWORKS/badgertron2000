@@ -45,7 +45,7 @@ namespace BadgerApi.Jenkins
             SetupControllerContext(controller);
 
             // set working directory so the test finds assets
-            Directory.SetCurrentDirectory("../BadgerApi/");
+            Directory.SetCurrentDirectory("../netcoreapp2.0/");
 
             // act
             var response = await controller.Get(projectName, buildId);
