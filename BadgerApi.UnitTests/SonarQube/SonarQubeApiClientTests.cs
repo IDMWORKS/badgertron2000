@@ -19,8 +19,8 @@ namespace BadgerApi.SonarQube
             var settings = new SonarQubeSettings(){ HostURL = "http://example.org" };
 
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When($"{settings.HostURL}/api/resources?format=json&resource={projectKey}&metrics={metric}")
-                .Respond("application/json", $"[{expected}]");
+            mockHttp.When($"{settings.HostURL}/api/measures/component?component={projectKey}&metricKeys={metric}")
+                .Respond("application/json", expected);
 
             HttpClient httpClient = new HttpClient(mockHttp);
 

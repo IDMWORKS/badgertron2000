@@ -29,7 +29,7 @@ namespace BadgerApi.SonarQube
         // see http://docs.sonarqube.org/display/SONAR/Metric+Definitions for available metrics
         public async Task<ExpandoObject> GetProjectMetrics(string projectKey, params string[] metrics)
         {
-            var url = $"{settings.HostURL}/api/resources?format=json&resource={projectKey}&metrics={String.Join(",", metrics)}";
+            var url = $"{settings.HostURL}/api/measures/component?component={projectKey}&metricKeys={String.Join(",", metrics)}";
 
             return await GetApiData(url);
         }
@@ -37,13 +37,10 @@ namespace BadgerApi.SonarQube
         private async Task<ExpandoObject> GetApiData(string url)
         {
             SetRequestHeaders(httpClient);
-            
+
             var json = await httpClient.GetStringAsync(url);
 
-            // because the SonarQube REST API returns an array of disparate objects in the "actions" property,
-            // and because we need to make use of those objects, we need to parse the JSON as a simple
-            // list of Key-Value-Pairs
-            return JsonConvert.DeserializeObject<List<ExpandoObject>>(json, new ExpandoObjectConverter()).FirstOrDefault();
+            return JsonConvert.DeserializeObject<ExpandoObject>(json, new ExpandoObjectConverter());
         }
 
         private void SetRequestHeaders(HttpClient client)

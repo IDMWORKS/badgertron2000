@@ -16,6 +16,8 @@ node_modules
 *.snk
 .nuget/NuGet.exe
 project.lock.json
+.vscode
+.idea
 
 BadgerApi/appsettings.json
 *.log
