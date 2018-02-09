@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceRoot}/BadgerApi/bin/Debug/netcoreapp1.0/BadgerApi.dll",
+            "program": "${workspaceRoot}/BadgerApi/bin/Debug/netcoreapp2.0/BadgerApi.dll",
             "args": [],
             "cwd": "${workspaceRoot}/BadgerApi",
             "stopAtEntry": false

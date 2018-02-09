@@ -38,47 +38,69 @@ namespace BadgerApi.SonarQube
             return new FileStreamResult(new FileStream($"images/badges/{badgeName}", FileMode.Open), "image/svg+xml");
         }
 
+        private static Dictionary<string, string> SqaleGradeMap = new Dictionary<string, string>
+        {
+            { "1.0", "A" },
+            { "2.0", "B" },
+            { "3.0", "C" },
+            { "4.0", "D" },
+            { "5.0", "E" }
+        };
+
         private string GetBadgeContentForSqualeRating(string sqaleRating)
         {
-            var badgeName = $"sqale-error.svg";
+            var badgeSuffix = "error";
 
-            // no test results found in the build status
             if (!String.IsNullOrEmpty(sqaleRating))
             {
-                char sqaleChar = sqaleRating.ToUpper()[0];
-                char[] sqaleRatings = { 'A', 'B', 'C', 'D', 'E' };
-                
-                if (sqaleRatings.Contains(sqaleChar))
+                // sqale is an 'A-to-E rating based on the technical debt ratio'
+                if (SqaleGradeMap.ContainsKey(sqaleRating))
                 {
-                    badgeName = $"sqale-{sqaleRating}.svg";
+                    badgeSuffix = SqaleGradeMap[sqaleRating];
+                }
+                else
+                {
+                    logger.LogWarning($"Unknown value '{sqaleRating}' for SQALE rating");
                 }
             }
 
-            return badgeName;
+            return $"sqale-{badgeSuffix}.svg";
         }
 
-        private const string MeauresKey = "msr";
-        private const string KeyKey = "key";
-        private const string DataKey = "data";
+        private const string MetricKey = "metric";
+        private const string ValueKey = "value";
+        private const string MeasuresKey = "measures";
         private const string SqaleRatingValue = "sqale_rating";
 
         private string ExtractSqaleFromMetrics(ExpandoObject projectMetrics)
         {
-            var projectKvp = projectMetrics.SingleOrDefault(kvp => MeauresKey.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase));
-            return projectKvp.Value == null ? null : ExtractSqaleFromMeasures(projectKvp);
+            var projectKvp = projectMetrics.SingleOrDefault();
+            return projectKvp.Value == null ? null : ExtractSqaleFromMeasures((ExpandoObject)projectKvp.Value);
         }
 
-        private string ExtractSqaleFromMeasures(KeyValuePair<string, object> projectMeasures)
+        private string ExtractSqaleFromMeasures(ExpandoObject componentDetails)
         {
             string sqaleRating = null;
 
-            var measuresList = (List<Object>)projectMeasures.Value;
-            foreach (ExpandoObject measure in measuresList)
+            var componentMeasures = componentDetails.SingleOrDefault(cd => MeasuresKey.Equals(cd.Key, StringComparison.OrdinalIgnoreCase));
+            if (componentMeasures.Value == null)
             {
-                sqaleRating = ExtractSqaleFromMeasure(measure);
-                if (sqaleRating != null)
+                logger.LogWarning($"Key '{MeasuresKey}' not found in SonarQube Web API response");
+            }
+            else
+            {
+                var measuresList = (List<Object>)componentMeasures.Value;
+                foreach (ExpandoObject measure in measuresList)
                 {
-                    break;
+                    sqaleRating = ExtractSqaleFromMeasure(measure);
+                    if (sqaleRating != null)
+                    {
+                        break;
+                    }
+                }
+                if (sqaleRating == null)
+                {
+                    logger.LogWarning($"Value '{SqaleRatingValue}' not found for key '{MetricKey}' in SonarQube Web API response");
                 }
             }
 
@@ -92,14 +114,14 @@ namespace BadgerApi.SonarQube
             bool isSqale = false;
             foreach (var measureValue in projectMeasure)
             {
-                if (KeyKey.Equals(measureValue.Key, StringComparison.OrdinalIgnoreCase))
+                if (MetricKey.Equals(measureValue.Key, StringComparison.OrdinalIgnoreCase))
                 {
                     if (SqaleRatingValue.Equals((string)measureValue.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         isSqale = true;
-                    } 
+                    }
                 }
-                else if (isSqale && DataKey.Equals((string)measureValue.Key, StringComparison.OrdinalIgnoreCase))
+                else if (isSqale && ValueKey.Equals((string)measureValue.Key, StringComparison.OrdinalIgnoreCase))
                 {
                     sqaleRating = (string)measureValue.Value;
                     break;
